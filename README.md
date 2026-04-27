@@ -18,3 +18,15 @@ In 5G Core (5GC) environments, network failure events (e.g., AMF overload, UDM t
 
 ## Research Context
 This tool is part of a broader framework for **Knowledge Graph Failure Localization** in autonomous 5G networks.
+
+CF-GNN/
+├── data/               # Sample telemetry CSVs (or download scripts)
+├── models/
+│   ├── __init__.py
+│   └── cf_gnn.py       # The refined code above
+├── notebooks/
+│   └── analysis.ipynb  # Visualization of class distribution/GFT spectral plots
+├── utils/
+│   └── preprocessing.py
+├── requirements.txt    # Essential for reproducibility
+├── README.md           # The "face" of the project
