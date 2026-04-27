@@ -1,0 +1,97 @@
+"""
+5G Core Network Failure - Class Distribution Analysis
+Author: Abubakar Isah
+Description: Preprocesses 5G telemetry data and visualizes class distribution 
+to assess imbalance in graph classification tasks.
+"""
+
+import torch
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from tkinter import Tk, filedialog
+import sys
+
+def select_csv_file():
+    """Opens a GUI dialog to select the input telemetry CSV."""
+    root = Tk()
+    root.withdraw()
+    file_path = filedialog.askopenfilename(
+        title="Select 5G Core Telemetry CSV", 
+        filetypes=[("CSV files", "*.csv")]
+    )
+    root.destroy() # Ensure the Tk instance is closed
+    return file_path
+
+def load_and_preprocess_data(csv_file_path):
+    """Loads, cleans, and scales the network dataset."""
+    df = pd.read_csv(csv_file_path)
+    
+    # Drop unnecessary columns (Adjust based on your specific 5GC log format)
+    cols_to_drop = ['time', 'source_name']
+    df.drop([c for c in cols_to_drop if c in df.columns], axis=1, inplace=True)
+
+    if 'y_true(fc)' not in df.columns:
+        raise ValueError("Target column 'y_true(fc)' not found in dataset.")
+
+    # Extract features and labels
+    X = df.drop('y_true(fc)', axis=1)
+    y_raw = df['y_true(fc)']
+
+    # Encode labels
+    label_encoder = LabelEncoder()
+    y_encoded = label_encoder.fit_transform(y_raw)
+
+    # Scale features
+    scaler = MinMaxScaler()
+    X_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+    return df, X_scaled, y_encoded
+
+def visualize_distribution(y_a, y_c):
+    """Generates a distribution plot to visualize class imbalance."""
+    combined_labels = pd.concat([y_a, y_c], axis=0)
+    
+    plt.figure(figsize=(10, 6))
+    # Using 'Classes' as y for the stripplot
+    sns.stripplot(
+        y=combined_labels, 
+        x=[1]*len(combined_labels), 
+        jitter=0.3, 
+        size=5, 
+        palette="viridis", 
+        orient='h',
+        alpha=0.6
+    )
+
+    plt.title('Class Distribution: Graph Classification Context', fontsize=14, fontweight='bold')
+    plt.ylabel('Failure Classes / Operational States', fontsize=12)
+    plt.xlabel('Density (Jittered)', fontsize=12)
+    plt.xticks([]) 
+    plt.grid(axis='y', linestyle='--', alpha=0.4)
+    plt.tight_layout()
+    plt.show()
+
+def main():
+    try:
+        path = select_csv_file()
+        if not path:
+            print("Operation cancelled by user.")
+            return
+
+        df, X, y = load_and_preprocess_data(path)
+
+        # Splitting logic (as per your specific research requirement)
+        df_a = df.sample(frac=0.5, random_state=42)
+        df_c = df.drop(df_a.index)
+
+        visualize_distribution(df_a['y_true(fc)'], df_c['y_true(fc)'])
+        print("Analysis complete.")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
