@@ -1,4 +1,4 @@
-# 5G Core Failure Distribution Analysis
+# Classical Fourier Graph Neural Network for Imbalance Failure Classification in 5G Network Digital Twins
 
 This repository contains a Python-based utility for preprocessing and visualizing class distributions in **5G Core Network Digital Twin** datasets. 
 
