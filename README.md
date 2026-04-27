@@ -12,6 +12,6 @@ In 5G Core (5GC) environments, network failure events (e.g., AMF overload, UDM t
 
 ## Usage
 1. Clone the repo: `git clone https://github.com/YourUsername/your-repo-name.git`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the script: `python main.py`
+2. Install dependencies: `pip install -r requirements.txt.`
+3. Run the script: `python main.py.`
 4. Select your 5G telemetry CSV when prompted.
